@@ -1,0 +1,62 @@
+version : "3.8"
+services:
+  # worker
+  plattuit-worker:
+    volumes:
+      - ./:/appuser
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile_workers
+    restart: on-failure:3
+    image: plattuit_worker:test
+    command: sh ./docker/app_workers.sh
+    container_name: plattuit-worker
+    depends_on:
+      - rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 5
+        window: 120s
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2024M
+        reservations:
+          cpus: '0.25'
+          memory: 1024M
+  # app container
+  plattuit:
+    volumes:
+      - ./:/appuser
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile_app
+    ports:
+      - "8000:8000"
+    restart: on-failure:3
+    image: plattuit_app:develop
+    command: sh ./docker/develop.sh
+    container_name: plattuit-app
+    depends_on:
+      - plattuit-worker
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 5
+        window: 120s
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2024M
+        reservations:
+          cpus: '0.25'
+          memory: 1024M
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672

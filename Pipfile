@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 django = "*"
+celery = "*"
+pika = "*"
 
 [dev-packages]
 pylint = "*"

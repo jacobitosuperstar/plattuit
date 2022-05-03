@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'microblog.apps.MicroblogConfig',
     'interaction.apps.InteractionConfig',
+    'tracking.apps.TrackingConfig',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +141,6 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CELERY
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672/'

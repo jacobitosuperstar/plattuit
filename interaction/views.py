@@ -6,10 +6,14 @@ from django.http import (
     HttpRequest,
     JsonResponse,
 )
-from django.db.models import F
 # local imports
-from plattuit.utils import time_zone
-from .models import Interaction
+from interaction.tasks import (
+    microblog_interaction_tracking_likes,
+    microblog_interaction_tracking_dislikes,
+)
+from tracking.tasks import (
+    microblog_interaction_tracking,
+)
 
 
 @require_POST
@@ -29,12 +33,21 @@ def api_micro_blog_add_like_view(
     '''
     # user = request.user
     microblog_id = request.POST.get("microblog_id")
-    Interaction.objects.filter(
-        microblog__id=microblog_id
-    ).update(
-        update_time=time_zone(),
-        likes=(F('likes') + 1),
+
+    # calling the celery task
+    microblog_interaction_tracking_likes.apply_async(
+        args=[microblog_id],
+        countdown=0
     )
+    # microblog_interaction_tracking_likes(microblog_id)
+
+    # grabando las interacciones
+    microblog_interaction_tracking.apply_async(
+        args=[microblog_id],
+        countdown=0
+    )
+    # microblog_interaction_tracking(microblog_id)
+
     info = {
         "status": 200,
         "info": "Me Gusta agregado",
@@ -59,12 +72,21 @@ def api_micro_blog_add_dislike_view(
     '''
     # user = request.user
     microblog_id = request.POST.get("microblog_id")
-    Interaction.objects.filter(
-        microblog__id=microblog_id
-    ).update(
-        update_time=time_zone(),
-        dislikes=(F('dislikes') + 1),
+
+    # calling the celery task
+    microblog_interaction_tracking_dislikes.apply_async(
+        args=[microblog_id],
+        countdown=0
     )
+    # microblog_interaction_tracking_dislikes(microblog_id)
+
+    # grabando las interacciones
+    microblog_interaction_tracking.apply_async(
+        args=[microblog_id],
+        countdown=0
+    )
+    # microblog_interaction_tracking(microblog_id)
+
     info = {
         "status": 200,
         "info": "No me Gusta agregado",

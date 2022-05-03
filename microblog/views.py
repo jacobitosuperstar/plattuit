@@ -10,6 +10,7 @@ from django.http import (
 )
 # local imports
 from .models import MicroBlog
+from tracking.tasks import microblog_view_tracking
 
 
 # landing page
@@ -41,13 +42,14 @@ def api_micro_blog_list_view(
     }
     '''
     microblogs = MicroBlog.objects.prefetch_related(
-            "interaction",
+        "interaction",
+        "tracking",
     ).all()
     microblogs_list = [{
         "título": microblog.title,
         "me_gusta": microblog.interaction.likes,
         "no_me_gusta": microblog.interaction.dislikes,
-        "vistas": 0,
+        "vistas": microblog.tracking.views,
     }for microblog in microblogs]
     info = {
         "status": 200,
@@ -90,7 +92,8 @@ def api_micro_blog_detail_view(
         microblog = MicroBlog.objects.select_related(
             "user",
         ).prefetch_related(
-            "interaction"
+            "interaction",
+            "tracking",
         ).get(
             id=microblog_id,
         )
@@ -100,12 +103,20 @@ def api_micro_blog_detail_view(
             "fecha_creación": microblog.creation_time,
             "me_gusta": microblog.interaction.likes,
             "no_me_gusta": microblog.interaction.dislikes,
-            "vistas": 0,
+            "vistas": microblog.tracking.views,
         }
         info = {
             "status": 200,
             "microblog": microblog,
         }
+
+        # contando las vistas
+        # microblog_view_tracking.apply_async(
+        #     args=[microblog_id],
+        #     countdown=0
+        # )
+        microblog_view_tracking(microblog_id)
+
     except MicroBlog.DoesNotExist:
         info = {
             "status": 404,
