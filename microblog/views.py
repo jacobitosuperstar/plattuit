@@ -28,12 +28,23 @@ def micro_blog_view(request: HttpRequest) -> HttpResponse:
 def api_micro_blog_list_view(
     request: HttpRequest,
 ) -> JsonResponse:
-    '''API sends lists of all microblogs'''
+    '''API sends lists of all microblogs
+
+    :type info: JsonResponse
+    :return info => Returns a JsonResponse with this structure
+    {
+        "status": int,
+        "título": str,
+        "me_gusta": int,
+        "no_me_gusta": int,
+        "vistas": int,
+    }
+    '''
     microblogs = MicroBlog.objects.all()
     microblogs_list = [{
         "título": microblog.title,
-        "me gusta": 0,
-        "no me gusta": 0,
+        "me_gusta": 0,
+        "no_me_gusta": 0,
         "vistas": 0,
     }for microblog in microblogs]
     info = {
@@ -51,7 +62,28 @@ def api_micro_blog_detail_view(
     request: HttpRequest,
     microblog_id: int,
 ) -> JsonResponse:
-    '''API sends detailed view of a microblog'''
+    '''API sends detailed view of a microblog
+
+    :type info: JsonResponse
+    :return info => Returns a JsonResponse with this structure if the MicroBlog
+    exists
+
+    {
+        "status": int,
+        "cuerpo": str,
+        "fecha_creación": str,
+        "me_gusta": int,
+        "no_me_gusta": int,
+        "vistas": int,
+    }
+
+    else
+
+    {
+        "status": int,
+        "info": str,
+    }
+    '''
     try:
         microblog = MicroBlog.objects.select_related(
             "user",
@@ -62,8 +94,8 @@ def api_micro_blog_detail_view(
             "usuario": microblog.user.username,
             "cuerpo": microblog.body,
             "fecha_creación": microblog.creation_time,
-            "me gusta": 0,
-            "no me gusta": 0,
+            "me_gusta": 0,
+            "no_me_gusta": 0,
             "vistas": 0,
         }
         info = {
@@ -85,10 +117,33 @@ def api_micro_blog_detail_view(
 def api_micro_blog_create_view(
     request: HttpRequest
 ) -> JsonResponse:
-    '''API sends lists of all microblogs'''
+    '''API sends lists of all microblogs
+
+    :type info: JsonResponse
+    :return info => Returns a JsonResponse with this structure if the MicroBlog
+    could be created
+
+    {
+        "status": int,
+        "microblog_id": int,
+    }
+
+    else
+
+    {
+        "status": int,
+        "info": str,
+    }
+    '''
     user = request.user
     body = request.POST.get("body")
     body = body[:200]
+    if len(body) == 0:
+        info = {
+            "status": 403,
+            "info": "No se puede crear un MicroBlog sin cuerpo",
+        }
+        return JsonResponse(info)
     try:
         microblog = MicroBlog.objects.create(
             user=user,
