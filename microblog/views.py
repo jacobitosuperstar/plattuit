@@ -40,11 +40,13 @@ def api_micro_blog_list_view(
         "vistas": int,
     }
     '''
-    microblogs = MicroBlog.objects.all()
+    microblogs = MicroBlog.objects.prefetch_related(
+            "interaction",
+    ).all()
     microblogs_list = [{
         "título": microblog.title,
-        "me_gusta": 0,
-        "no_me_gusta": 0,
+        "me_gusta": microblog.interaction.likes,
+        "no_me_gusta": microblog.interaction.dislikes,
         "vistas": 0,
     }for microblog in microblogs]
     info = {
@@ -87,6 +89,8 @@ def api_micro_blog_detail_view(
     try:
         microblog = MicroBlog.objects.select_related(
             "user",
+        ).prefetch_related(
+            "interaction"
         ).get(
             id=microblog_id,
         )
@@ -94,8 +98,8 @@ def api_micro_blog_detail_view(
             "usuario": microblog.user.username,
             "cuerpo": microblog.body,
             "fecha_creación": microblog.creation_time,
-            "me_gusta": 0,
-            "no_me_gusta": 0,
+            "me_gusta": microblog.interaction.likes,
+            "no_me_gusta": microblog.interaction.dislikes,
             "vistas": 0,
         }
         info = {

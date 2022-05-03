@@ -7,6 +7,7 @@ User = get_user_model()
 
 
 class MicroBlog(models.Model):
+    '''MicroBlog objects'''
 
     user = models.ForeignKey(
         User,
@@ -44,9 +45,9 @@ class MicroBlog(models.Model):
     )
 
     class Meta:
-        db_table = 'blog'
-        verbose_name = ('blog')
-        verbose_name_plural = ('blogs')
+        db_table = 'microblog'
+        verbose_name = ('microblog')
+        verbose_name_plural = ('microblogs')
 
     # save method
     def save(self, *args, **kawrgs):

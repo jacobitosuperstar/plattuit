@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # my apps
     'account.apps.AccountConfig',
     'microblog.apps.MicroblogConfig',
+    'interaction.apps.InteractionConfig',
 ]
 
 MIDDLEWARE = [

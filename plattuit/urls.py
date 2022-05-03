@@ -33,6 +33,8 @@ urlpatterns = [
 
     # Micro Blog
     path("", include("microblog.urls")),
+    # Interaction
+    path("interaction/", include("interaction.urls")),
 ]
 
 # account views

@@ -13,6 +13,7 @@ User = get_user_model()
 class MicroBlogFunctionalityTest(TestCase):
     def test_micro_blog_creation_fine(self):
         """Test of api_micro_blog_create_view"""
+        print("\n** microblog creación -> MicroBlog con Cuerpo **")
         # user creation
         user = User.objects.create_user(
             email='dummy@dummy.com',
@@ -35,13 +36,13 @@ class MicroBlogFunctionalityTest(TestCase):
             "/api/microblog/create/",
             data={"body": dumy_text},
         )
-        print("\n** microblog creación -> MicroBlog con Cuerpo **")
         content = json.loads(response.content)
         print(content)
         self.assertEqual(content.get("status"), 200)
 
     def test_micro_blog_creation_errror(self):
         """Test of api_micro_blog_create_view"""
+        print("\n** microblog creación -> MicroBlog sin Cuerpo **")
         # user creation
         user = User.objects.create_user(
             email='dummy@dummy.com',
@@ -60,13 +61,13 @@ class MicroBlogFunctionalityTest(TestCase):
             "/api/microblog/create/",
             data={"body": dumy_text},
         )
-        print("\n** microblog creación -> MicroBlog sin Cuerpo **")
         content = json.loads(response.content)
         print(content)
         self.assertEqual(content.get("status"), 403)
 
     def test_micro_blog_list(self):
         """Test of api_micro_blog_list_view"""
+        print("\n** microblog vista general **")
         # user creation
         user = User.objects.create_user(
             email='dummy@dummy.com',
@@ -93,13 +94,13 @@ class MicroBlogFunctionalityTest(TestCase):
         response = c.get(
             "/api/microblog/",
         )
-        print("\n** microblog vista general **")
         content = json.loads(response.content)
         print(content)
         self.assertEqual(content.get("status"), 200)
 
     def test_micro_blog_detail_existing(self):
         """Test of api_micro_blog_detail_view"""
+        print("\n** microblog vista detalle -> MicroBlog Existente **")
         # user creation
         user = User.objects.create_user(
             email='dummy@dummy.com',
@@ -126,13 +127,13 @@ class MicroBlogFunctionalityTest(TestCase):
         response = c.get(
             f"/api/microblog/{micro_blog.id}/",
         )
-        print("\n** microblog vista detalle -> MicroBlog Existente **")
         content = json.loads(response.content)
         print(content)
         self.assertEqual(content.get("status"), 200)
 
     def test_micro_blog_detail_non_existing(self):
         """Test of api_micro_blog_detail_view"""
+        print("\n** microblog vista detalle -> MicroBlog no Existente **")
         # user creation
         user = User.objects.create_user(
             email='dummy@dummy.com',
@@ -145,7 +146,6 @@ class MicroBlogFunctionalityTest(TestCase):
 
         # Creation of the blog
         response = c.get("/api/microblog/10000/")
-        print("\n** microblog vista detalle -> MicroBlog no Existente **")
         content = json.loads(response.content)
         print(content)
         self.assertEqual(content.get("status"), 404)
