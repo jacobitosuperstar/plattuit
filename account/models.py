@@ -45,6 +45,7 @@ class MyAccountManager(BaseUserManager):
             password=password,
             username=username,
         )
+        user.is_staff = True
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -79,6 +80,11 @@ class Account(AbstractBaseUser):
         verbose_name='es activo?',
     )
 
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name='es empleado',
+    )
+
     is_admin = models.BooleanField(
         default=False,
         verbose_name='es administrador?',
@@ -94,6 +100,7 @@ class Account(AbstractBaseUser):
 
     objects = MyAccountManager()
 
+    # Save method
     def save(self, *args, **kwargs):
         self.last_login = time_zone()
         super().save(*args, **kwargs)

@@ -7,6 +7,7 @@ User = get_user_model()
 
 class UserManagerTest(TestCase):
     def test_create_user(self):
+        print("\n** Creación de Usuario **")
         '''Testbed for the account creation module.
 
         In this module we will evalueate, creation, values and errors.'''
@@ -52,6 +53,7 @@ class UserManagerTest(TestCase):
 
         In this module we will evalueate, creation, values and errors.'''
 
+        print("\n** Creación de Super Usuario **")
         # creation
         admin_user = User.objects.create_superuser(
             username='dummy',

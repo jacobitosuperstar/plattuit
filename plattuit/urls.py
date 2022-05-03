@@ -31,6 +31,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    # Micro Blog
+    path("", include("microblog.urls")),
 ]
 
 # account views

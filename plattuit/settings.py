@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     # my apps
     'account.apps.AccountConfig',
+    'microblog.apps.MicroblogConfig',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,8 @@ ROOT_URLCONF = 'plattuit.urls'
 
 '''Personalized account model'''
 AUTH_USER_MODEL = 'account.Account'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
 
 TEMPLATES = [
     {
